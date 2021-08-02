@@ -8,7 +8,7 @@ docker run \
   --rm \
   -e PLAYLISTS="" \
   -e HC_URL="" \
-  -v <path to download folder>:/media
+  -v <path to download folder>:/media \
   jk8c19/playlist_downloader:latest
 ```
 
