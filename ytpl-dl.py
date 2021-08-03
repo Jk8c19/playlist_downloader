@@ -13,9 +13,9 @@ else:
 # detect method of passing playlists to script
 if os.environ.get('PLAYLISTS') is None:
     print("No PLAYLISTS env found, checking playlists.txt")
-    if os.path.isfile(script_dir+'\\playlists.txt'):
-        pl_file = open(script_dir+"\\playlists.txt", "r")
-        PLAYLISTS = [line.rstrip('\n') for line in pl_file.readlines()]
+    playlist_file = os.path.join(script_dir, "playlists.txt")
+    if os.path.isfile(playlist_file):
+        PLAYLISTS = [line.rstrip('\n') for line in open(playlist_file, "r").readlines()]
     else:
         print("No playlists.txt file found, this cannot continue...")
         exit(1)
