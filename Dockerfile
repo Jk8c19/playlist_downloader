@@ -1,5 +1,6 @@
 FROM python:3.9-slim
 ENV WORKDIR=/media
+ENV DLTYPE=mp3
 
 # Install req'd packages
 RUN apt-get update

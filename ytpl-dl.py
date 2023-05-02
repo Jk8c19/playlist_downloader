@@ -23,12 +23,25 @@ else:
     print("Found PLAYLISTS env, splitting out")
     PLAYLISTS = os.environ['PLAYLISTS'].split(",")
 
+if os.environ.get('DLTYPE') is None:
+    print("No mode selection provided, assuming MP3 outputs")
+    dl_type = "mp3"
+else:
+    dl_type = os.environ['DLTYPE']
+
+if dl_type == "mp3":
+    dl_opts = f"--no-post-overwrites -ciwx --audio-format mp3 --add-metadata --embed-thumbnail"
+else:
+    dl_opts = f"-ciw -f bestvideo+bestaudio/best --merge-output-format mp4"
+
 print("Found playlists to download:")
 print(*PLAYLISTS, sep=", ")
 
 for pl in PLAYLISTS:
     print(f"Downloading from {pl} playlist")
-    os.system(f"/usr/bin/yt-dlp --download-archive '{WORKDIR}/.logs/{pl}.log' --no-post-overwrites -ciwx --audio-format mp3 --add-metadata --embed-thumbnail -o '{WORKDIR}/%(playlist)s/%(title)s.%(ext)s' {pl}")
+    
+    os.system(f"/usr/bin/yt-dlp --download-archive '{WORKDIR}/.logs/{pl}.log' {dl_opts} -o '{WORKDIR}/%(playlist)s/%(title)s.%(ext)s' {pl}")
+
 
 print("Finished downloading from all playlists!")
 exit(0)
