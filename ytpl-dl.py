@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 # pwd of the running script
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -42,6 +43,26 @@ for pl in PLAYLISTS:
     
     os.system(f"/usr/bin/yt-dlp --download-archive '{WORKDIR}/.logs/{pl}.log' {dl_opts} -o '{WORKDIR}/%(playlist)s/%(title)s.%(ext)s' {pl}")
 
+print("Updating playlist files")
+
+dirlist = [ item for item in os.listdir(WORKDIR) if os.path.isdir(os.path.join(WORKDIR, item)) ]
+filetypes = ("*.mp3", "*.m4a", "*.flac")
+
+for folder in dirlist:
+    audiofiles = []
+    print(f"Scanning for media in {folder}")
+
+    for filetype in filetypes:
+        audiofiles.extend(list(Path(os.path.join(WORKDIR, folder)).rglob(filetype)))
+
+    if len(audiofiles) > 0:
+        print(f"Found {len(audiofiles)} files to add to playlist")
+        with open(os.path.join(WORKDIR, folder, f"{folder}.m3u"), 'w', encoding="utf-8") as plf:
+            for file in audiofiles:
+                filepath = os.path.join(WORKDIR, file)
+                filename = os.path.basename(filepath)
+                plf.write(f"{filename}\n")
+        print(f"Saved to {folder}.m3u")
 
 print("Finished downloading from all playlists!")
 exit(0)
