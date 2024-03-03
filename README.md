@@ -1,5 +1,7 @@
 # playlist_downloader
-I needed a way to download and keep up to date a collection of youtube music playlist. This container will, with the latest version of yt-dlp download .mp3's into a mounted volume.
+
+Containerized yt-dlp. Downloaded at startup of the container, will take parameters from a config file rendered by a provided Jinja2 template.
+Has support for Health Checks pings and generation of .m3u files for music archives.
 
 Run the container with
 ```bash
