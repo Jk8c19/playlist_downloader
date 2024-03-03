@@ -1,12 +1,17 @@
 FROM python:3.9-slim
-ENV WORKDIR=/media
-ENV DLTYPE=mp3
+ENV DOWNLOAD_DIR=/data
+ENV CONFIG_PATH=/opt/yt-dlp.conf
+ENV CREATE_AUDIO_PLAYLISTS=False
 
 # Install req'd packages
 RUN apt-get update
 RUN apt-get -y install bash curl ffmpeg
 
-COPY download.sh /opt/download.sh
-COPY ytpl-dl.py /opt/ytpl-dl.py
+# Install python packages
+COPY requirements.txt /opt/requirements.txt
+RUN pip install -r /opt/requirements.txt
 
-CMD "/opt/download.sh"
+COPY run.sh /opt/run.sh
+COPY app.py /opt/app.py
+
+CMD bash /opt/run.sh
