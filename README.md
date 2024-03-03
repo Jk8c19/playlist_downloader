@@ -6,28 +6,37 @@ Run the container with
 docker run \
   --name=pl_dl \
   --rm \
-  -e PLAYLISTS="" \
-  -e HC_URL="" \
+  -e HC_URL=" \
+  -e "TEMPLATE_PATH=<Path to Jinja2 configuration template file>" \
+  -e "DOWNLOAD_DIR=<Directory to download files into>" \
+  -e "ARCHIVE_PATH=<Path to the yt-dlp '–download-archive' parameter>" \
+  -e "BATCH_PATH=<Path to the yt-dlp '-a' parameter>" \
+  -e "CREATE_AUDIO_PLAYLISTS=<True/False>" \
   -v <path to download folder>:/media \
   jk8c19/playlist_downloader:latest
 ```
 
-This is a run once container, so using --rm will clean up once it's done its thing.
-
-# Other features
+This container will exit on completion so using --rm will clean up once it's done its thing.
 
 ## Health Checks
 
-The container has support to ping a Health Checks instance, simply supply the HTTP url to your check.
+Passing a Health Checks HTTP url with the `HC_URL` variable will signal start, success and failure of the container
 
-## playlists.txt
+## Configuration Templates
 
-If you have a *really* large collection of playlists to download you can supply mount a playlists.txt file to `/opt` in the container to read from, if you do this make sure not to specify the PLAYLISTS environment variable!
+The container will take in a Jinja2 template file from the `TEMPLATE_PATH` environment variable to be used for generating the config file passed to yt-dlp.
+The following variables are mapped to:
 
-# Parameters
+| Config Variable | Container Env | yt-dlp Parameter
+|-|-|-|
+| {{ downloadDir }} | DOWNLOAD_DIR | -o
+| {{ archivePath }} | ARCHIVE_PATH | --download-archive
+| {{ batchPath }} | BATCH_PATH | -a
 
-| Parameter | Function | Req | Default |
-|-|-|-|-|
-| PLAYLISTS | comma separated list of playlists to be downloaded from | n
-| HC_URL | Healthchecks URL to ping | N
-| WORKDIR | This is set by the Dockerfile and is where you should mount your download volume too | N | /media |
+Examples have been provided.
+
+## CREATE_AUDIO_PLAYLISTS
+
+This parameter defaults to `False` if not provided. If set to true it will iterate through the folders in the `DOWNLOAD_DIR`, list the audio files and output them into a `.m3u` file.
+
+This allows apps like Navidrome to read the audio files in the folders as playlists.
